@@ -1,14 +1,8 @@
-/**
- * Control brushless motors via electronic speed controller
- */
 
 #ifndef _esc_h
 #define _esc_h
 
-#include <stdio.h>
 #include <time.h>
-#include <pthread.h>
-#include "rpi.h"
 
 #define CYCLE_NS            20000000
 #define PULSE_NS            1300000
@@ -19,14 +13,17 @@
 #define ESC_MAX             700000
 
 typedef struct {
-    int value;
-    int channel;
-} esc_output;
+    unsigned int value;
+    short channel;
+    short flipX;
+    short flipY;
+} esc;
 
-int setup_esc();
-void *esc_loop(void*);
-int init_motor(esc_output* motor);
 
-struct timespec esc_cycle_wait;
+esc* esc_New(short, short, short);
+int esc_Start(esc*);
+void* esc_Loop(void*);
+
+struct timespec ESC_CYCLE_WAIT {0, CYCLE_NS};
 
 #endif

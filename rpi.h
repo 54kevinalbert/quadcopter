@@ -77,8 +77,8 @@ extern struct bcm2835_peripheral bsc0;
 #define CLEAR_STATUS    BSC_S_CLKT|BSC_S_ERR|BSC_S_DONE
 
 // I2C Function Prototypes
-void i2c_init();
-void wait_i2c_done();
+void i2c_Init();
+void i2c_Sync();
 
 // Utility
 long deltaT_Usecs(struct timespec*);
