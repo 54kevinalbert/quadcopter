@@ -3,8 +3,8 @@
 #include "rpi.h"
 #include "cloudkicker.h"
 
-#define TRIGGER 4
-#define ECHO    10
+#define TRIGGER 27
+#define ECHO    22
 
 
 int main(void) {
@@ -23,8 +23,8 @@ int main(void) {
     
     
     struct timespec 
-        pulse   = {0, 10000},    //    0.10 ms
-        wait    = {0, 5000},     //    0.05 ms
+        pulse   = {0, 10000},     //   0.10 ms
+        wait    = {0, 5000},      //   0.05 ms
         loop    = {0, 500000000}; // 500.00 ms
     
     GPIO_SET = 1 << TRIGGER;

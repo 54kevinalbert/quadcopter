@@ -1,4 +1,4 @@
-#include <sys/time.h>
+#include <time.h>
 #include "rpi.h"
 
 struct bcm2835_peripheral gpio = {GPIO_BASE};
@@ -43,9 +43,8 @@ void wait_i2c_done() {
     struct timespec wait_i2c_ts = {0, 1000000};
     
     int timeout = 50;
-    while((!((BSC0_S) & BSC_S_DONE)) && --timeout) {
-        nanosleep(wait_i2c_ts, NULL);
-    }
+    while((!((BSC0_S) & BSC_S_DONE)) && --timeout)
+        nanosleep(&wait_i2c_ts, NULL);
 
     if(timeout == 0)
         printf("Error: wait_i2c_done() timeout.\n");
@@ -54,8 +53,7 @@ void wait_i2c_done() {
 long delta_T_Usecs(struct timespec* t) {
     struct timespec k;
     clock_gettime(CLOCK_REALTIME, &k);
-    long v = (k.tv_sec - t->tv_sec) * 1000000 + 
-             (k.tv_nsec - t->tv_nsec) / 1000;
+    long v = (k.tv_sec - t->tv_sec) * 1000000 + (k.tv_nsec - t->tv_nsec) / 1000;
     t->tv_sec = k.tv_sec;
     t->tv_nsec = k.tv_nsec;
     return v;
