@@ -46,11 +46,16 @@ void unmap_peripheral(struct bcm2835_peripheral *p);
 extern struct bcm2835_peripheral bsc1;
 
 // I2C macros
-#define BSC1_C          *(bsc1.addr + 0x00)
-#define BSC1_S          *(bsc1.addr + 0x01)
-#define BSC1_DLEN       *(bsc1.addr + 0x02)
-#define BSC1_A          *(bsc1.addr + 0x03)
-#define BSC1_FIFO       *(bsc1.addr + 0x04)
+// #define BSC1_C          *(bsc1.addr + 0x00)
+// #define BSC1_S          *(bsc1.addr + 0x01)
+// #define BSC1_DLEN       *(bsc1.addr + 0x02)
+// #define BSC1_A          *(bsc1.addr + 0x03)
+// #define BSC1_FIFO       *(bsc1.addr + 0x04)
+#define BSC1_C          *(bsc1.addr)
+#define BSC1_S          *(bsc1.addr + 0x4)
+#define BSC1_DLEN       *(bsc1.addr + 0x8)
+#define BSC1_A          *(bsc1.addr + 0xc)
+#define BSC1_FIFO       *(bsc1.addr + 0x10)
 
 #define BSC_C_I2CEN     (1 << 15)
 #define BSC_C_INTR      (1 << 10)
