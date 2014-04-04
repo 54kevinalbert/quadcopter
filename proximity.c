@@ -32,6 +32,20 @@ int main(void) {
     nanosleep(&loop, NULL);
     
     while(1) {
+
+        printf("1\n");
+        GPIO_CLR = 1 << TRIGGER;
+        nanosleep(&loop, 0);
+        nanosleep(&loop, 0);
+        printf("0\n");
+        GPIO_SET = 1 << TRIGGER;
+        nanosleep(&loop, 0);
+        nanosleep(&loop, 0);
+        
+    }
+
+
+    while(1) {
     
         printf("looping\n");
 
