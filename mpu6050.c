@@ -1,3 +1,4 @@
+#include "rpi.h"
 #include "mpu6050.h"
 
 void mpu_Init(void) {
@@ -13,14 +14,14 @@ void mpu_SetRegister(unsigned char regAddr, unsigned char regValue) {
     // Master:   S  AD+W       RA       DATA       P
     // Slave :            ACK      ACK        ACK
     
-    BSC0_A = MPU6050_ADDR;
+    BSC1_A = MPU6050_ADDR;
     
-    BSC0_DLEN = 2;
-    BSC0_FIFO = (unsigned char)regAddr;
-    BSC0_FIFO = (unsigned char)regValue;
+    BSC1_DLEN = 2;
+    BSC1_FIFO = (unsigned char)regAddr;
+    BSC1_FIFO = (unsigned char)regValue;
     
-    BSC0_S = CLEAR_STATUS;  // Reset status bits (see #define)
-    BSC0_C = START_WRITE;   // Start Write (see #define)
+    BSC1_S = CLEAR_STATUS;  // Reset status bits (see #define)
+    BSC1_C = START_WRITE;   // Start Write (see #define)
     
     i2c_Sync();
 }
@@ -31,17 +32,17 @@ void mpu_Read(short * accData, short * gyrData) {
     // Master:   S  AD+W       RA       S  AD+R           ACK        NACK  P
     // Slave :            ACK      ACK          ACK DATA       DATA
     
-    BSC0_DLEN = 1;          // one byte
-    BSC0_FIFO = 0x3B;       // value of first register
-    BSC0_S = CLEAR_STATUS;  // Reset status bits (see #define)
-    BSC0_C = START_WRITE;   // Start Write (see #define)
+    BSC1_DLEN = 1;          // one byte
+    BSC1_FIFO = 0x3B;       // value of first register
+    BSC1_S = CLEAR_STATUS;  // Reset status bits (see #define)
+    BSC1_C = START_WRITE;   // Start Write (see #define)
     
     i2c_Sync();
     
-    BSC0_DLEN = 14;
+    BSC1_DLEN = 14;
     
-    BSC0_S = CLEAR_STATUS;  // Reset status bits (see #define)
-    BSC0_C = START_READ;    // Start Read after clearing FIFO (see #define)
+    BSC1_S = CLEAR_STATUS;  // Reset status bits (see #define)
+    BSC1_C = START_READ;    // Start Read after clearing FIFO (see #define)
     
     i2c_Sync();
     
@@ -50,20 +51,20 @@ void mpu_Read(short * accData, short * gyrData) {
     // Accelerometer
     int i = 0;
     for(i; i < 3; i++) {
-        tmp         = BSC0_FIFO << 8;
-        tmp        += BSC0_FIFO;
+        tmp         = BSC1_FIFO << 8;
+        tmp        += BSC1_FIFO;
         accData[i]  = tmp;
     }
     
     // Temperature
-    tmp  = BSC0_FIFO << 8;
-    tmp += BSC0_FIFO;
+    tmp  = BSC1_FIFO << 8;
+    tmp += BSC1_FIFO;
     
     // Gyroscope
     i = 0;
     for(i; i < 3; i++) {
-        tmp         = BSC0_FIFO << 8;
-        tmp        += BSC0_FIFO;
+        tmp         = BSC1_FIFO << 8;
+        tmp        += BSC1_FIFO;
         gyrData[i]  = tmp; 
     }
 }

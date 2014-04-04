@@ -1,16 +1,20 @@
 
 #MPU 6050 test program
 CC=cc
-CFLAGS=
-LDFLAGS=-lrt -lunistd -lncurses
+CFLAGS=-lrt -lm
+LDFLAGS=
 EXE=mpuTest
 SOURCES=main.c mpu6050.c rpi.c
 OBJECTS=$(SOURCES:.c=.o)
 
-all: $(SOURCES) $(EXE)
+all: mpu6050.o rpi.o
+	$(CC) $(CFLAGS) main.c mpu6050.o rpi.o -o $(EXE)
 
-$(EXE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+mpu6050.o: mpu6050.c rpi.o
+	$(CC) $(CFLAGS) mpu6050.c rpi.o -o mpu6050.o -c
 
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
+rpi.o: rpi.c
+	$(CC) $(CFLAGS) rpi.c -o rpi.o -c
+
+clean:
+	rm -f *.o $(EXE)

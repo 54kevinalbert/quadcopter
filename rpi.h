@@ -6,7 +6,7 @@
  */
 
 #ifndef RPI_H
-#define	RPI_H
+#define RPI_H
 
 #include <stdio.h>
 #include <sys/mman.h>
@@ -16,7 +16,7 @@
 #include <unistd.h>
 
 #define BCM2708_PERI_BASE   0x20000000
-#define GPIO_BASE           (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
+#define GPIO_BASE           (BCM2708_PERI_BASE + 0x200000)  // GPIO controller
 #define BLOCK_SIZE          (4*1024)
 
 // IO Access
@@ -41,16 +41,16 @@ int map_peripheral(struct bcm2835_peripheral *p);
 void unmap_peripheral(struct bcm2835_peripheral *p);
 
 //I2C Controller
-#define BSC0_BASE       (BCM2708_PERI_BASE + 0x205000)
+#define BSC1_BASE       (BCM2708_PERI_BASE + 0x804000)
 
-extern struct bcm2835_peripheral bsc0;
+extern struct bcm2835_peripheral bsc1;
 
 // I2C macros
-#define BSC0_C          *(bsc0.addr + 0x00)
-#define BSC0_S          *(bsc0.addr + 0x01)
-#define BSC0_DLEN       *(bsc0.addr + 0x02)
-#define BSC0_A          *(bsc0.addr + 0x03)
-#define BSC0_FIFO       *(bsc0.addr + 0x04)
+#define BSC1_C          *(bsc1.addr + 0x00)
+#define BSC1_S          *(bsc1.addr + 0x01)
+#define BSC1_DLEN       *(bsc1.addr + 0x02)
+#define BSC1_A          *(bsc1.addr + 0x03)
+#define BSC1_FIFO       *(bsc1.addr + 0x04)
 
 #define BSC_C_I2CEN     (1 << 15)
 #define BSC_C_INTR      (1 << 10)
@@ -83,5 +83,5 @@ void i2c_Sync();
 // Utility
 long deltaT_Usecs(struct timespec*);
 
-#endif	/* RPI_H */
+#endif  /* RPI_H */
 

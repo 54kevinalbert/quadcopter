@@ -2,7 +2,7 @@
 #include "rpi.h"
 
 struct bcm2835_peripheral gpio = {GPIO_BASE};
-struct bcm2835_peripheral bsc0 = {BSC0_BASE};
+struct bcm2835_peripheral bsc1 = {BSC1_BASE};
 
 int map_peripheral(struct bcm2835_peripheral *p) {
     // Open /dev/mem
@@ -30,7 +30,7 @@ void unmap_peripheral(struct bcm2835_peripheral *p) {
 
 
 // Initialize I2C
-void i2c_init() {
+void i2c_Init() {
     INP_GPIO(0);
     SET_GPIO_ALT(0, 0);
     INP_GPIO(1);
@@ -39,18 +39,18 @@ void i2c_init() {
 
 
 // Function to wait for the I2C transaction to complete
-void wait_i2c_done() {
+void i2c_Sync() {
     struct timespec wait_i2c_ts = {0, 1000000};
     
     int timeout = 50;
-    while((!((BSC0_S) & BSC_S_DONE)) && --timeout)
+    while((!((BSC1_S) & BSC_S_DONE)) && --timeout)
         nanosleep(&wait_i2c_ts, NULL);
 
     if(timeout == 0)
-        printf("Error: wait_i2c_done() timeout.\n");
+        printf("Error: i2c_Sync() timeout.\n");
 }
 
-long delta_T_Usecs(struct timespec* t) {
+long deltaT_Usecs(struct timespec* t) {
     struct timespec k;
     clock_gettime(CLOCK_REALTIME, &k);
     long v = (k.tv_sec - t->tv_sec) * 1000000 + (k.tv_nsec - t->tv_nsec) / 1000;
