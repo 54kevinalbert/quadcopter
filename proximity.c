@@ -1,7 +1,6 @@
 #include <time.h>
 #include <pthread.h>
 #include "rpi.h"
-#include "cloudkicker.h"
 
 #define TRIGGER 27
 #define ECHO    22
