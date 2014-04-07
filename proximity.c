@@ -30,24 +30,8 @@ int main(void) {
     
     printf("sleeping\n");
     nanosleep(&loop, NULL);
-    
-    while(1) {
-
-        printf("1\n");
-        GPIO_CLR = 1 << TRIGGER;
-        nanosleep(&loop, 0);
-        nanosleep(&loop, 0);
-        printf("0\n");
-        GPIO_SET = 1 << TRIGGER;
-        nanosleep(&loop, 0);
-        nanosleep(&loop, 0);
-        
-    }
-
 
     while(1) {
-    
-        printf("looping\n");
 
         // Set the trigger and wait 0.1 ms
         GPIO_CLR = 1 << TRIGGER;
@@ -62,12 +46,10 @@ int main(void) {
         
         // Get the end time and calculate the difference
         clock_gettime(CLOCK_MONOTONIC, &tend);
-        printf("calculating results\n");
         int usecs = (tend.tv_sec - tstart.tv_sec) * 1000000 +
                     (tend.tv_nsec - tstart.tv_nsec) / 1000;
 
         // Convert to meters
-        printf("saving results\n");
         int r = (340.29 * usecs) / 1000000;
         printf("%f meters\n", r);
         nanosleep(&loop, NULL);
