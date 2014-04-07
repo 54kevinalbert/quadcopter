@@ -47,7 +47,7 @@ int main(void) {
                     (tend.tv_nsec - tstart.tv_nsec) / 1000;
 
         // Convert to meters
-        int r = (340.29 * usecs) / 1000000;
+        double r = (340.29 * (double) usecs) / 1000000;
         printf("%f meters\n", r);
         nanosleep(&loop, NULL);
     }
