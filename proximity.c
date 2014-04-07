@@ -13,9 +13,7 @@ int main(void) {
         printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
         return -1;
     }
-
-    // Use inverted IO mapping because TRIGGER
-    // and ECHO are both run through transistors    
+    
     INP_GPIO(TRIGGER);
     OUT_GPIO(TRIGGER);
     INP_GPIO(ECHO);
@@ -26,7 +24,7 @@ int main(void) {
         wait    = {0, 5000},      //   0.05 ms
         loop    = {0, 500000000}; // 500.00 ms
     
-    GPIO_SET = 1 << TRIGGER;
+    GPIO_CLR = 1 << TRIGGER;
     
     printf("sleeping\n");
     nanosleep(&loop, NULL);
@@ -34,14 +32,14 @@ int main(void) {
     while(1) {
 
         // Set the trigger and wait 0.1 ms
-        GPIO_CLR = 1 << TRIGGER;
-        nanosleep(&pulse, NULL);
         GPIO_SET = 1 << TRIGGER;
+        nanosleep(&pulse, NULL);
+        GPIO_CLR = 1 << TRIGGER;
         
         // Record the current time, wait for an echo
         struct timespec tstart={0,0}, tend={0,0};
         clock_gettime(CLOCK_MONOTONIC, &tstart);
-        while (GPIO_READ(ECHO))
+        while (!GPIO_READ(ECHO))
             nanosleep(&wait, NULL);
         
         // Get the end time and calculate the difference
