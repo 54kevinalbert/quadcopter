@@ -5,10 +5,8 @@
 #define TRIGGER 27
 #define ECHO    22
 
-
 int main(void) {
 
-    printf("mapping peripherals\n");
     if (map_peripheral(&gpio) == -1) {
         printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
         return -1;
@@ -20,14 +18,15 @@ int main(void) {
     
     
     struct timespec 
-        pulse   = {0, 10000},     //   0.10 ms
-        wait    = {0, 5000},      //   0.05 ms
-        loop    = {0, 500000000}; // 500.00 ms
+        pulse   = {0, 10000},     // 0.10 ms
+        wait    = {0, 5000},      // 0.05 ms
+        loop    = {0, 25000000};  // 25.00 ms
     
     GPIO_CLR = 1 << TRIGGER;
     
     printf("sleeping\n");
     nanosleep(&loop, NULL);
+
 
     while(1) {
 
@@ -48,7 +47,7 @@ int main(void) {
                     (tend.tv_nsec - tstart.tv_nsec) / 1000;
 
         // Convert to meters
-        int r = (340.29 * usecs) / 1000000;
+        double r = (340.29 * (double) usecs) / 1000000;
         printf("%f meters\n", r);
         nanosleep(&loop, NULL);
     }
