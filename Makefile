@@ -1,5 +1,5 @@
-
 #MPU 6050 test program
+# check /var/log/kern.log
 CC=cc
 CFLAGS=-lrt -lm
 LDFLAGS=
