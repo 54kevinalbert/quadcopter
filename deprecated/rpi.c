@@ -57,5 +57,5 @@ long deltaT_Usecs(struct timespec* t) {
     t->tv_sec = k.tv_sec;
     t->tv_nsec = k.tv_nsec;
     return v;
-    
 }
+

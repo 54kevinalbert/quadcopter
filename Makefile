@@ -1,20 +1,17 @@
 #MPU 6050 test program
 # check /var/log/kern.log
-CC=cc
-CFLAGS=-lrt -lm
-LDFLAGS=
-EXE=mpuTest
-SOURCES=main.c mpu6050.c rpi.c
-OBJECTS=$(SOURCES:.c=.o)
+CC=g++
+CFLAGS=-lrt -lm -Iheaders -lbcm2835
+SOURCES=src/gyro.cpp
+OBJECTS=$(patsubst src/%.cpp, build/%.o, $(SOURCES))
 
-all: mpu6050.o rpi.o
-	$(CC) $(CFLAGS) main.c mpu6050.o rpi.o -o $(EXE)
+all: runner
 
-mpu6050.o: mpu6050.c rpi.o
-	$(CC) $(CFLAGS) mpu6050.c rpi.o -o mpu6050.o -c
+runner: src/main.cpp $(OBJECTS)
+	$(CC) $(CFLAGS) src/main.cpp $(OBJECTS) -o runner
 
-rpi.o: rpi.c
-	$(CC) $(CFLAGS) rpi.c -o rpi.o -c
+$(OBJECTS): build/%.o: src/%.cpp build
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o $(EXE)
+	rm -f build/* runner
