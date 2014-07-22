@@ -1,7 +1,9 @@
 #include <iostream>
 #include <math.h>
 #include <time.h>
-#include <bcm2835.h>
+extern "C" {
+  #include <bcm2835.h>
+}
 #include "gyro.h"
 
 inline int abs(short v) {
@@ -100,3 +102,12 @@ void Gyro::read() {
     std::cout << "pitch: " << pitch << ", roll: " << roll << std::endl;
 } 
 
+/*
+int main(int argc, char** argv) {
+    Gyro* gryo = new Gyro();
+    for (int i = 0; i < 100; i++) {
+        usleep(10000);
+        gryo->read();
+    }
+}
+*/

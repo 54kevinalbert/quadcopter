@@ -1,5 +1,4 @@
-#ifndef _Gyro
-#define _Gyro
+#pragma once
 
 #include <time.h>
 
@@ -12,7 +11,7 @@ class Gyro {
         double getZ();
         void read();
         //const float ACCELEROMETER_SENSITIVITY 8192.0;
-        static const double GYROSCOPE_SENSITIVITY = 0.065536;
+        static const double GYROSCOPE_SENSITIVITY = 655360.0;
     private:
         short accData[3];
         short gyrData[3];
@@ -22,4 +21,3 @@ class Gyro {
         struct timespec tthen;
 };
 
-#endif

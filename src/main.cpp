@@ -1,10 +1,13 @@
+#include <iostream>
 #include "gyro.cpp"
 
 int main(int argc, char** argv) {
-    Gyro* gryo = new Gyro();
+    std::cout << "start\n";
+    Gyro* gyro = new Gyro();
     for (int i = 0; i < 100; i++) {
-        usleep(10000);
-        gryo->read();
+        usleep(100000);
+        gyro->read();
     }
+    std::cout << "stop\n";
 }
 
