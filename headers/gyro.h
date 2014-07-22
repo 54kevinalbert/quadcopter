@@ -4,20 +4,20 @@
 
 class Gyro {
     public:
-        Gyro();
-        ~Gyro();
-        double getPitch();
-        double getRoll();
-        double getZ();
-        void read();
+        static void start();
+        static void stop();
+        static double getPitch();
+        static double getRoll();
+        static double getZ();
+        static void read();
         //const float ACCELEROMETER_SENSITIVITY 8192.0;
         static const double GYROSCOPE_SENSITIVITY = 655360.0;
     private:
-        short accData[3];
-        short gyrData[3];
-        double pitch;
-        double roll;
-        double z;
-        struct timespec tthen;
+        static short accData[3];
+        static short gyrData[3];
+        static double pitch;
+        static double roll;
+        static double z;
+        static struct timespec tthen;
 };
 

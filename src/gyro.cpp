@@ -10,7 +10,7 @@ inline int abs(short v) {
     return v < 0 ? v * -1 : v;
 }
 
-Gyro::Gyro() {
+void Gyro::start() {
     clock_gettime(CLOCK_REALTIME, &tthen);
     pitch = 0;
     roll = 0;
@@ -20,23 +20,23 @@ Gyro::Gyro() {
     bcm2835_i2c_setSlaveAddress(0x68);
 }
 
-Gyro::~Gyro() {
+void Gyro::stop() {
     bcm2835_i2c_end();
 }
 
-double Gyro::getPitch() {
+static double Gyro::getPitch() {
     return pitch;
 }
 
-double Gyro::getRoll() {
+static double Gyro::getRoll() {
     return roll;
 }
 
-double Gyro::getZ() {
+static double Gyro::getZ() {
     return z;
 }
 
-void Gyro::read() {
+static void Gyro::read() {
 
     char buf[14];
     char regaddr[2];
