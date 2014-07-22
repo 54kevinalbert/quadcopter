@@ -60,8 +60,8 @@ void Gyro::read() {
 
     regaddr[0] = 59;
     ret = BCM2835_I2C_REASON_ERROR_DATA;
-    while(ret != BCM2835_I2C_REASON_OK) {
-        //This is the basic operation to read an register
+    while (ret != BCM2835_I2C_REASON_OK) {
+        //This is the basic operation to read a register
         //regaddr[0] is the register address
         //buf[0] is the value
         bcm2835_i2c_write(regaddr, 1);
@@ -70,7 +70,7 @@ void Gyro::read() {
 
     regaddr[0] = 60;
     ret = BCM2835_I2C_REASON_ERROR_DATA;
-    while(buf[0] == 99) {
+    while (buf[0] == 99) {
         bcm2835_i2c_write(regaddr, 1);
         ret = bcm2835_i2c_read(buf, 1);
     }
@@ -101,13 +101,3 @@ void Gyro::read() {
 
     std::cout << "pitch: " << pitch << ", roll: " << roll << std::endl;
 } 
-
-/*
-int main(int argc, char** argv) {
-    Gyro* gryo = new Gyro();
-    for (int i = 0; i < 100; i++) {
-        usleep(10000);
-        gryo->read();
-    }
-}
-*/
