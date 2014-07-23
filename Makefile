@@ -3,7 +3,7 @@
 CC=g++
 CFLAGS=-std=c++0x -Iheaders
 LDFLAGS=-lrt -lm -lbcm2835
-SOURCES=src/main.cpp src/quadcopter.cpp src/motor.cpp src/gyro.cpp
+SOURCES=src/main.cpp src/quadcopter.cpp src/motor.cpp src/gyro.cpp src/conf.cpp
 OBJECTS=$(patsubst src/%.cpp, %.o, $(SOURCES))
 
 all: runner

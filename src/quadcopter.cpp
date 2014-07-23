@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "conf.h"
 #include "gyro.h"
 #include "motor.h"
 #include "quadcopter.h"
@@ -10,7 +11,9 @@ bool QuadCopter::interrupt;
 Motor* QuadCopter::motors[4];
 
 void QuadCopter::start() {
-
+    
+    Conf::init("settings.conf");
+    
     interrupt = false;
 
     motors[0] = new Motor(15);
@@ -20,14 +23,16 @@ void QuadCopter::start() {
 
     std::cout << "start\n";
     Gyro::start();
+    /*
     for (int i = 0; i < 100; i++) {
         usleep(10000);
         Gyro::read();
     }
+    */
     for (int i = 0; i < 100; i++) {
-        usleep(10000);
+        usleep(100000);
         Gyro::read();
-        std::cout << Gyro::getPitch() << '\n';
+        std::cout << "p" << Gyro::getPitch() << "\tr" << Gyro::getRoll() << "\tz: " << Gyro::getZ() << '\n';
     }
 
     // Start the loop!
