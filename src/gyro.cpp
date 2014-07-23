@@ -10,6 +10,13 @@ inline int abs(short v) {
     return v < 0 ? v * -1 : v;
 }
 
+short Gyro::accData[3];
+short Gyro::gyrData[3];
+double Gyro::pitch;
+double Gyro::roll;
+double Gyro::z;
+struct timespec Gyro::tthen;
+
 void Gyro::start() {
     clock_gettime(CLOCK_REALTIME, &tthen);
     pitch = 0;
@@ -44,8 +51,8 @@ void Gyro::read() {
 
     struct timespec tnow;
     clock_gettime(CLOCK_REALTIME, &tnow);
-    double ms = (tnow.tv_sec - tthen.tv_sec) * 1000;
-    ms += (tnow.tv_sec - tthen.tv_nsec) / 1000000;
+    double t = tnow.tv_sec - tthen.tv_sec;
+    t += (tnow.tv_sec - tthen.tv_nsec) / 1000000000L;
     tthen.tv_sec = tnow.tv_sec;
     tthen.tv_nsec = tnow.tv_nsec;
 
@@ -86,18 +93,16 @@ void Gyro::read() {
             gyrData[i] -= 1<<16;
     }
 
-    double pitchAcc, rollAcc; 
-
-    pitch += ((double)gyrData[0] / GYROSCOPE_SENSITIVITY) * ms;
-    roll  -= ((double)gyrData[1] / GYROSCOPE_SENSITIVITY) * ms;
+    pitch += ((double)gyrData[0] / 65.536) * t;
+    roll  -= ((double)gyrData[1] / 65.536) * t;
 
     int forceMagnitudeApprox = abs(accData[0]) + abs(accData[1]) + abs(accData[2]);
     if (forceMagnitudeApprox > 8192 && forceMagnitudeApprox < 32768) {
-        pitchAcc = (double) atan((double)accData[1] / (double)accData[2]) * 180 / M_PI;
-        rollAcc = (double) atan((double)accData[0] / (double)accData[2]) * 180 / M_PI;
-        pitch = pitch * 0.98 + pitchAcc * 0.02;
-        roll = roll * 0.98 + rollAcc * 0.02;
+        double pitchAcc = (double) atan((double)accData[1] / (double)accData[2]) * 180 / M_PI;
+        double rollAcc =  (double) atan((double)accData[0] / (double)accData[2]) * 180 / M_PI;
+        pitch =    pitch * 0.98 + pitchAcc * 0.02;
+        roll =     roll * 0.98 + rollAcc * 0.02;
     }
 
-    std::cout << "pitch: " << pitch << ", roll: " << roll << std::endl;
+//    std::cout << "pitch: " << pitch << ", roll: " << roll << std::endl;
 } 

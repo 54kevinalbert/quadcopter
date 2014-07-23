@@ -1,21 +1,27 @@
 #MPU 6050 test program
 # check /var/log/kern.log
 CC=g++
-CFLAGS=-lrt -lm -lbcm2835 -Iheaders -std=c++0x
-LDFLAGS=
+CFLAGS=-std=c++0x -Iheaders
+LDFLAGS=-lrt -lm -lbcm2835
 SOURCES=src/main.cpp src/quadcopter.cpp src/motor.cpp src/gyro.cpp
-OBJECTS=$(patsubst src/%.cpp, build/%.o, $(SOURCES))
+OBJECTS=$(patsubst src/%.cpp, %.o, $(SOURCES))
 
 all: runner
 
-runner: build/main.o
-	$(CC) $(LDFLAGS) $< -o runner $(CFLAGS)
+install: runner
+	cp runner /usr/local/bin
 
-$(OBJECTS): build/%.o: src/%.cpp build
-	$(CC) -c $< -o $@ $(CFLAGS) 
+runner: $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
+
+$(OBJECTS): %.o: src/%.cpp 
+	$(CC) $(CFLAGS) -c $< -o $@
 	
+echo:
+	echo $(OBJECTS)
+
 build:
 	mkdir build
 
 clean:
-	rm -f build/* runner
+	rm -f *.o runner
