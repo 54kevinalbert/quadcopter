@@ -1,5 +1,5 @@
 #include <iostream>
-#include "gyro.cpp"
+#include "quadcopter.h"
 
 int main(int argc, char** argv) {
     QuadCopter::start();

@@ -1,10 +1,8 @@
-
-
 #include "gyro.h"
 #include "motor.h"
 #include "quadcopter.h"
 
-public static void QuadCopter::start() {
+void QuadCopter::start() {
     motors = new (Motor())[4];
     std::cout << "start\n";
     Gyro::start();
@@ -14,7 +12,7 @@ public static void QuadCopter::start() {
     }
 }
 
-public static void QuadCopter::do(char c) {
+void QuadCopter::cmd(char c) {
     Gyro::stop();
     std::cout << "stop";
 }

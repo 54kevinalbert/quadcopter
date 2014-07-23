@@ -11,7 +11,7 @@ class Gyro {
         static double getZ();
         static void read();
         //const float ACCELEROMETER_SENSITIVITY 8192.0;
-        static const double GYROSCOPE_SENSITIVITY = 655360.0;
+        static const double GYROSCOPE_SENSITIVITY = 65.536;
     private:
         static short accData[3];
         static short gyrData[3];

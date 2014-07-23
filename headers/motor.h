@@ -4,4 +4,4 @@ class Motor {
     public:
         Motor(int);
         ~Motor();
-}
+};

@@ -24,19 +24,19 @@ void Gyro::stop() {
     bcm2835_i2c_end();
 }
 
-static double Gyro::getPitch() {
+double Gyro::getPitch() {
     return pitch;
 }
 
-static double Gyro::getRoll() {
+double Gyro::getRoll() {
     return roll;
 }
 
-static double Gyro::getZ() {
+double Gyro::getZ() {
     return z;
 }
 
-static void Gyro::read() {
+void Gyro::read() {
 
     char buf[14];
     char regaddr[2];
