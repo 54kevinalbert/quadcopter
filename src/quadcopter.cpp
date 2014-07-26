@@ -10,49 +10,97 @@ std::mutex* QuadCopter::lock;
 bool QuadCopter::interrupt;
 Motor* QuadCopter::motors[4];
 
+double QuadCopter::forceX;
+double QuadCopter::forceY;
+double QuadCopter::forceZ;
+
 void QuadCopter::start() {
     
+    std::cout << "Reading settings\n";
     Conf::init("settings.conf");
+
+    std::cout << "bcm2835_init()\n";
+    bcm2835_init();
     
     interrupt = false;
 
+    std::cout << "registering motors\n"
     motors[0] = new Motor(15);
     motors[1] = new Motor(18);
     motors[2] = new Motor(23);
     motors[3] = new Motor(24);
 
-    std::cout << "start\n";
+    std::cout << "Gyro::start()\n";
     Gyro::start();
-    /*
-    for (int i = 0; i < 100; i++) {
-        usleep(10000);
-        Gyro::read();
-    }
-    */
-    for (int i = 0; i < 100; i++) {
-        usleep(100000);
-        Gyro::read();
-        std::cout << "p" << Gyro::getPitch() << "\tr" << Gyro::getRoll() << "\tz: " << Gyro::getZ() << '\n';
+
+    std::cout << "looping\n";
+    loopThread = new std::thread(QuadCopter::tick);
+
+    std::cout << "reading from stdin\n";
+    char c;
+    while (std::cin >> c) {
+        cmd(c);
     }
 
-    // Start the loop!
-    loopThread = new std::thread(QuadCopter::tick);
+    stop();
 }
 
 void QuadCopter::tick() {
-    std::cout << "tick\n";
+    usleep(10000);
+
 }
 
-void QuadCopter::cmd(char c) {
-    Gyro::stop();
-    std::cout << "stop\n";
+void QuadCopter::cmd(int c) {
+    switch (c) {
+        
+        case FORWARD
+            applyImpulse(&forceY, 0.1);
+            break;
+
+        case BACK:
+            applyImpulse(&forceY, -0.1);
+            break;
+
+        case LEFT:
+            applyImpulse(&forceX, -0.1);
+            break;
+
+        case RIGHT:
+            applyImpulse(&forceX, 0.1);
+            break;
+
+        case UP:
+            applyImpulse(&forceZ, 0.1);
+            break;
+
+        case DOWN:
+            applyImpulse(&forceZ, -0.1);
+            break;
+
+        case STOP:
+            stop();
+            break;
+
+        default:
+            // nop
+    }
+}
+
+// this could get more complicated
+void applyImpulse(double* component, double amount) {
+    *component += amount;
 }
 
 void QuadCopter::stop() {
+    for (int i = 0; i < 4; i++)
+        motors[i]->stop();
+
     for (int i = 0; i < 4; i++) {
+        motors[i]->join();
         delete motors[i];
         motors[i] = 0;
     }
+
     interrupt = true;
     loopThread->join();
     Gyro::stop();

@@ -26,7 +26,6 @@ void Gyro::start() {
     clock_gettime(CLOCK_REALTIME, &tthen);
 
     // initialize pitch and roll with the accelerometer data
-    bcm2835_init();
     bcm2835_i2c_begin();
     bcm2835_i2c_setSlaveAddress(0x68);
 
