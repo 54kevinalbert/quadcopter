@@ -35,6 +35,13 @@ class QuadCopter {
 
     private:
 
+        // Force components
+        static double forceX;
+        static double forceY;
+        static double forceZ;
+
+        static void applyImpulse(double*, double);
+
         // Threads
         static std::thread* loopThread;
         static std::mutex* lock;
@@ -51,6 +58,15 @@ class QuadCopter {
         static const int TOP_RIGHT      = 1;
         static const int BOTTOM_LEFT    = 2;
         static const int BOTTOM_RIGHT   = 3;
+
+        // Control characters
+        static const int FORWARD        = 'w';
+        static const int BACK           = 's';
+        static const int LEFT           = 'a';
+        static const int RIGHT          = 'd';
+        static const int UP             = 'k';
+        static const int DOWN           = 'j';
+        static const int STOP           = 'x';
 };
 
 #endif
