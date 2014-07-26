@@ -1,2 +1,3 @@
 *.o
-mpuTest
+runner
+a.out
