@@ -1,19 +1,11 @@
 #include <iostream>
 #include <math.h>
 #include <time.h>
-extern "C" {
-  #include <bcm2835.h>
-}
+#include <bcm2835.h>
 #include "conf.h"
 #include "gyro.h"
 
-inline int abs(short v) {
-    return v < 0 ? v * -1 : v;
-}
-
-inline double absd(double v) {
-    return v < 0 ? v * -1 : v;
-}
+#define abs(v) (v < 0 ? v * -1 : v)
 
 short Gyro::accData[3];
 short Gyro::gyrData[3];
@@ -98,13 +90,9 @@ void Gyro::read() {
     char regaddr[2];
     int ret;
 
-    //disable sleep mode!!!!!
+    //disable sleep mode!
     regaddr[0] = 107;
     regaddr[1] = 0;
-
-    //This is the basic operation to write to a register
-    //regaddr[0] is the register address
-    //regaddr[1] is the value
     bcm2835_i2c_write(regaddr, 2);
 
     regaddr[0] = 59;
@@ -140,9 +128,11 @@ void Gyro::read() {
 
     int forceMagnitudeApprox = abs(accData[0]) + abs(accData[1]) + abs(accData[2]);
     if (forceMagnitudeApprox > 8192 && forceMagnitudeApprox < 32768) {
-        pitch = 0.98 * pitch + 0.2 * (double) atan((double)accData[1] / (double)accData[2]);
-        roll  = 0.98 * roll  + 0.2 * (double) atan((double)accData[0] / (double)accData[2]);
 
+        if (abs(accData[2] > 0.0001)) {
+            pitch = 0.98 * pitch + 0.2 * (double) atan((double)accData[1] / (double)accData[2]);
+            roll  = 0.98 * roll  + 0.2 * (double) atan((double)accData[0] / (double)accData[2]);
+        }
         double cosP = cos(pitch);
         double cosR = cos(roll);
         z = (double) accData[0]*(1-cosR) +

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <bcm2835.h>
 
 #include "conf.h"
 #include "gyro.h"
@@ -24,7 +26,7 @@ void QuadCopter::start() {
     
     interrupt = false;
 
-    std::cout << "registering motors\n"
+    std::cout << "registering motors\n";
     motors[0] = new Motor(15);
     motors[1] = new Motor(18);
     motors[2] = new Motor(23);
@@ -33,8 +35,9 @@ void QuadCopter::start() {
     std::cout << "Gyro::start()\n";
     Gyro::start();
 
-    std::cout << "looping\n";
+    lock = new std::mutex();
     loopThread = new std::thread(QuadCopter::tick);
+    std::cout << "looping\n";
 
     std::cout << "reading from stdin\n";
     char c;
@@ -45,15 +48,47 @@ void QuadCopter::start() {
     stop();
 }
 
-void QuadCopter::tick() {
-    usleep(10000);
+void QuadCopter::forceDecay(double* force, double decay) {
+    if (*force < -1 * decay) *force += decay;
+    else if (*force > decay) *force -=decay;
+    else *force = 0;
+}
 
+void QuadCopter::tick() {
+
+    while (!interrupt) {
+
+        // Loop every 10 ms
+        usleep(10000);
+
+        // Populate gyroscope data
+        Gyro::read();
+
+        lock->lock();
+
+        forceDecay(&forceX, Conf::XYDecay);
+        forceDecay(&forceY, Conf::XYDecay);
+        forceDecay(&forceZ, Conf::ZDecay);
+
+        forceX -= Gyro::getRoll() * Conf::GyroForce;
+        forceY -= Gyro::getPitch() * Conf::GyroForce;
+        forceZ -= Gyro::getZ() * Conf::ZForce;
+
+        lock->unlock();
+
+        for (int i = 0; i < 4; i++) {
+            // calculate motor speed
+        }
+    }
 }
 
 void QuadCopter::cmd(int c) {
+    
+    double forces[3];
+
     switch (c) {
         
-        case FORWARD
+        case FORWARD:
             applyImpulse(&forceY, 0.1);
             break;
 
@@ -81,19 +116,52 @@ void QuadCopter::cmd(int c) {
             stop();
             break;
 
+        case 'f':
+
+            // DEBUG
+            // print forces
+            lock->lock();
+            forces[0] = forceX;
+            forces[1] = forceY;
+            forces[2] = forceZ;
+            lock->unlock();
+
+            std::cout << std::setw(10) << forces[0]
+                      << std::setw(10) << forces[1]
+                      << std::setw(10) << forces[2]
+                      << '\n';
+
+            break;
+
+        case 'g':
+
+            // DEBUG
+            // print gyroscope data
+            lock->lock();
+            lock->unlock();
+
+            std::cout << std::setw(10) << Gyro::getRoll()
+                      << std::setw(10) << Gyro::getPitch()
+                      << std::setw(10) << Gyro::getZ()
+                      << '\n';
+
+            break;
+
         default:
             // nop
+            break;
     }
 }
 
-// this could get more complicated
-void applyImpulse(double* component, double amount) {
+// this could get more complicated, which is why it's in 
+// its own function
+void QuadCopter::applyImpulse(double* component, double amount) {
     *component += amount;
 }
 
 void QuadCopter::stop() {
     for (int i = 0; i < 4; i++)
-        motors[i]->stop();
+        motors[i]->interrupt();
 
     for (int i = 0; i < 4; i++) {
         motors[i]->join();

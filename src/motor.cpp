@@ -1,5 +1,5 @@
 #include <time.h>
-#include <bcm2853.h>
+#include <bcm2835.h>
 #include <thread>
 #include <mutex>
 #include "motor.h"
@@ -7,7 +7,7 @@
 Motor::Motor(int pin) {
     this->pin = pin;
     speed = 0;
-    running = interrupt = false;
+    running = interrupted = false;
     lock = new std::mutex();
 }
 
@@ -24,20 +24,20 @@ void Motor::start() {
     if (running)
         return;
     running = true;
-    loopThread = new std::thread(Motor::loop, this);
+    loopThread = new std::thread(&Motor::loop, this);
 }
 
 void Motor::interrupt() {
     if (!running)
         return;
-    interrupt = true;
+    interrupted = true;
 }
 
 void Motor::join() {
     if (!running)
         return;
     loopThread->join();
-    interrupt = false;
+    interrupted = false;
     running = false;
 }
 
@@ -59,7 +59,7 @@ void Motor::loop() {
     // testing reveals that <1.25 ms is off, so use the function
     // dt = (1.25ms + 0.75ms * speed)
     //
-    while (!interrupt) {
+    while (!interrupted) {
         usleep(20000);
 
         double s;

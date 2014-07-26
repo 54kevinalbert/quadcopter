@@ -14,14 +14,14 @@ install: runner
 runner: $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 
-$(OBJECTS): %.o: src/%.cpp 
+$(OBJECTS): %.o: src/%.cpp  src/conf.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 	
-echo:
-	echo $(OBJECTS)
+src/conf.cpp: genconf.sh settings.conf
+	./genconf.sh conf
 
 build:
 	mkdir build
 
 clean:
-	rm -f *.o runner
+	rm -f *.o runner src/conf.cpp headers/conf.h

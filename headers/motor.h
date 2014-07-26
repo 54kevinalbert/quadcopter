@@ -44,7 +44,7 @@ class Motor {
         int pin;
         double speed;
         bool running;
-        volatile bool interrupt;
+        volatile bool interrupted;
         std::mutex* lock;
         std::thread* loopThread;
 };

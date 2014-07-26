@@ -17,8 +17,14 @@ class QuadCopter {
 
         /**
          * Process an instruction
+         * Controls are:
+         * w,a,s,d for moving
+         * j: down
+         * k: up
+         * x: quit
+         * all lowercase
          */
-        static void cmd(char);
+        static void cmd(int);
 
         /**
          * Set the interrupt flag
@@ -41,6 +47,7 @@ class QuadCopter {
         static double forceZ;
 
         static void applyImpulse(double*, double);
+        static void forceDecay(double*, double);
 
         // Threads
         static std::thread* loopThread;
